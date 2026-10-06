@@ -1,0 +1,14 @@
+export { AvisoActualizacion } from "./aviso-actualizacion";
+export { AvisoFrecuenciaActualizacion } from "./aviso-frecuencia-actualizacion";
+export { BannerEstadoAnalisis } from "./banner-estado-analisis";
+export { CalendarioProyectos } from "./calendario-proyectos";
+export { FormularioNuevoProyecto } from "./formulario-nuevo-proyecto";
+export { ModalActivarProyecto } from "./modal-activar-proyecto";
+export { ModalDesactivarProyecto } from "./modal-desactivar-proyecto";
+export { ModalEliminarProyecto } from "./modal-eliminar-proyecto";
+export { ModalResumenIaProyectos } from "./modal-resumen-ia-proyectos";
+export { ResumenIaProyectos } from "./resumen-ia-proyectos";
+export { ResumenIaReal } from "./resumen-ia-real";
+export { StatResumen } from "./stat-resumen";
+export { TarjetaProyecto } from "./tarjeta-proyecto";
+export { VistaProyectos } from "./vista-proyectos";

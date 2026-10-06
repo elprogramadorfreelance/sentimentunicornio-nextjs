@@ -1,0 +1,13 @@
+export { AudienciasLanding } from "./audiencias-landing";
+export { CtaFinalLanding } from "./cta-final-landing";
+export { FaqLanding } from "./faq-landing";
+export { FooterLanding } from "./footer-landing";
+export { FuncionesLanding } from "./funciones-landing";
+export { HeroLanding } from "./hero-landing";
+export { HeroVideoLanding } from "./hero-video-landing";
+export { IaSimplificaLanding } from "./ia-simplifica-landing";
+export { NavbarLanding } from "./navbar-landing";
+export { PlanesLanding } from "./planes-landing";
+export { PruebaSocialLanding } from "./prueba-social-landing";
+export { PulseWave } from "./pulse-wave";
+export { ServiciosLanding } from "./servicios-landing";

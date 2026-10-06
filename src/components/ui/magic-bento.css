@@ -1,0 +1,69 @@
+.magic-bento-section {
+  --glow-color: 132, 0, 255;
+}
+
+.magic-bento-section .magic-bento-card {
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-intensity: 0;
+  --glow-radius: 200px;
+}
+
+/* Anula el layout de las tarjetas demo: el sidebar debe conservar
+   altura, fondo y selección de texto. */
+.magic-bento-section .magic-bento-card,
+.magic-bento-section .magic-bento-card:hover,
+.magic-bento-section .particle-container:hover {
+  transform: none;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  aspect-ratio: auto;
+  min-height: 0;
+  padding: 0;
+  user-select: auto;
+}
+
+.magic-bento-section .magic-bento-card--border-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 6px;
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(var(--glow-color), calc(var(--glow-intensity) * 0.8)) 0%,
+    rgba(var(--glow-color), calc(var(--glow-intensity) * 0.4)) 30%,
+    transparent 60%
+  );
+  border-radius: inherit;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.magic-bento-section .particle::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: rgba(var(--glow-color), 0.2);
+  z-index: -1;
+}
+
+.magic-bento-section .global-spotlight {
+  mix-blend-mode: normal;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.dark .magic-bento-section .global-spotlight {
+  mix-blend-mode: screen;
+}

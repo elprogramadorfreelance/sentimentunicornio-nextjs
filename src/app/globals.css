@@ -1,0 +1,858 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  /* ─── Brandbook ─────────────────────────────────────────── */
+  --color-navy: #1f3c7a;
+  --color-blue: #0056a4;
+  --color-sky: #1bb8e1;
+  /* Azul de marca fijo: no se redefine en .dark — hover del sidebar y
+     títulos glass usan el mismo valor en ambos temas. */
+  --color-brand-blue: #0056a4;
+  /* Paradas del degradado del sidebar (violeta → azul → cielo). */
+  --color-sidebar-from: #2c0d5a;
+  --color-sidebar-via: #0056a4;
+  --color-sidebar-to: #1bb8e1;
+  /* Sky "atenuado" ya mezclado (no color-mix): los navegadores no
+     resuelven color-mix() en el atributo SVG fill de Nivo, cae a
+     negro. Se precalcula el blend con el fondo de cada tema. */
+  --color-sky-muted: #a9e2f2;
+
+  /* ─── Semánticos ────────────────────────────────────────── */
+  --color-primary: #0056a4;
+  --color-primary-hover: #1f3c7a;
+  --color-primary-fg: #ffffff;
+  --color-primary-foreground: #ffffff;
+  --color-accent: #6c1ad9;
+  --color-accent-fg: #161712;
+  --color-accent-foreground: #161712;
+
+  /* ─── Status ────────────────────────────────────────────── */
+  --color-success: #16a34a;
+  --color-error: #dc2626;
+  --color-destructive: #dc2626;
+  --color-warning: #f5d718;
+
+  /* ─── Backgrounds · Light ───────────────────────────────── */
+  --color-bg-base: #f6f2f8;
+  --color-bg-subtle: #f9f6fa;
+  --color-bg-muted: #f5f5f5;
+  --color-background: #f6f2f8;
+  --color-foreground: #161712;
+  --color-muted: #f5f5f5;
+  --color-muted-foreground: #7a7475;
+  --color-secondary: #f5f5f5;
+  --color-secondary-foreground: #161712;
+  --color-card: #ffffff;
+  --color-card-foreground: #161712;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #161712;
+
+  /* ─── Borders · Light ───────────────────────────────────── */
+  --color-border-default: #d5ced0;
+  --color-border-strong: #a89fa1;
+  --color-border: #d5ced0;
+  --color-input: #d5ced0;
+  --color-ring: #6c1ad9;
+
+  /* ─── Gráficas · gris neutro ──────────────────────────────
+     Independientes de border-strong/bg-muted: sus valores en
+     modo oscuro son casi negros, pensados para bordes/fondos,
+     no para representar datos visibles (barras, líneas). ── */
+  --color-chart-neutral: #a89fa1;
+  --color-chart-neutral-subtle: #f5f5f5;
+
+  /* ─── Text · Light ──────────────────────────────────────── */
+  --color-text-primary: #161712;
+  --color-text-secondary: #4b4648;
+  --color-text-muted: #7a7475;
+  --color-text-on-primary: #ffffff;
+
+  /* ─── Tipografía ──────────────────────────────────────────── */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-grift), ui-sans-serif, system-ui, sans-serif;
+
+  /* Type scale (ver design-system/MASTER.md) */
+  --text-micro: 0.625rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+
+  /* ─── Spacing (4pt / 8pt, density 7) ─────────────────────── */
+  --space-bento: 0.8rem;
+
+  /* ─── Radius (sutil · canonical = lg) ────────────────────── */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius: 0.5rem;
+
+  /* ─── Borders / elevation ───────────────────────────────── */
+  --border-width: 1px;
+  --shadow-widget: 0 1px 2px rgba(22, 23, 18, 0.04);
+  --shadow-sm: 0 1px 2px rgba(22, 23, 18, 0.05);
+  --shadow-md: 0 4px 6px rgba(22, 23, 18, 0.08);
+  --shadow-lg: 0 10px 15px rgba(22, 23, 18, 0.1);
+
+  /* ─── Motion ────────────────────────────────────────────── */
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 440ms;
+  /* No se llama --ease-out: esa var ya la usa Tailwind v4 para su propio
+     utility ease-out; renombrarla lo cambiaría en toda la app. */
+  --ease-emphasized: cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* ─── Sidebar (shadcn) · mismo fondo que el body ── */
+  --color-sidebar: var(--color-bg-base);
+  --color-sidebar-foreground: var(--color-text-primary);
+  --color-sidebar-primary: var(--color-brand-blue);
+  --color-sidebar-primary-foreground: #ffffff;
+  --color-sidebar-accent: color-mix(in srgb, #0056a4 16%, var(--color-bg-base));
+  --color-sidebar-accent-foreground: var(--color-brand-blue);
+  --color-sidebar-border: color-mix(in srgb, #0056a4 22%, transparent);
+  --color-sidebar-ring: var(--color-brand-blue);
+}
+
+/* ─── Enter/exit utilities (sin tailwindcss-animate) ──────────
+ * Dialog referencia animate-in/animate-out/fade-in-0/fade-out-0/
+ * zoom-in-95/zoom-out-95, que no son utilities reales de Tailwind sin el
+ * plugin tailwindcss-animate. Se reproducen a mano las 6 que la app usa. */
+@utility animate-in {
+  animation-name: enter;
+  animation-duration: 200ms;
+  animation-timing-function: var(--ease-emphasized);
+  animation-fill-mode: both;
+  --tw-enter-opacity: initial;
+  --tw-enter-scale: initial;
+}
+@utility animate-out {
+  animation-name: exit;
+  animation-duration: 200ms;
+  animation-timing-function: var(--ease-emphasized);
+  animation-fill-mode: both;
+  --tw-exit-opacity: initial;
+  --tw-exit-scale: initial;
+}
+@utility fade-in-0 {
+  --tw-enter-opacity: 0;
+}
+@utility fade-out-0 {
+  --tw-exit-opacity: 0;
+}
+@utility zoom-in-95 {
+  --tw-enter-scale: 0.95;
+}
+@utility zoom-out-95 {
+  --tw-exit-scale: 0.95;
+}
+
+@keyframes enter {
+  from {
+    opacity: var(--tw-enter-opacity, 1);
+    transform: scale(var(--tw-enter-scale, 1));
+  }
+}
+@keyframes exit {
+  to {
+    opacity: var(--tw-exit-opacity, 1);
+    transform: scale(var(--tw-exit-scale, 1));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-in,
+  .animate-out {
+    animation-duration: 1ms;
+    animation-timing-function: linear;
+  }
+}
+
+/* ─── Landing: motivo de "pulso" (señal en vivo) ──────────────
+ * Reutilizado en hero y CTA final para evocar "escucha cada
+ * conversación" — una línea de pulso viajando, no un blob genérico. */
+@keyframes pulse-travel {
+  to {
+    stroke-dashoffset: -400;
+  }
+}
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+@keyframes landing-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0);
+  }
+}
+
+.animate-pulse-travel {
+  animation: pulse-travel 7s linear infinite;
+}
+.animate-pulse-dot {
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+.animate-landing-drift {
+  animation: landing-drift 6s ease-in-out infinite;
+}
+
+@keyframes marquee-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee-scroll 32s linear infinite;
+}
+
+@keyframes sparkle-ia {
+  to {
+    width: calc(var(--sparkle-w) * 0.5px);
+    transform: translate(2000%, -50%);
+  }
+}
+
+@keyframes sparkle-ia-on {
+  to {
+    width: calc(var(--sparkle-w) * 1px);
+    transform: translate(5000%, -50%);
+  }
+}
+
+.sparkle-ia {
+  width: calc(var(--sparkle-w) * 1px);
+  rotate: calc(1deg * var(--sparkle-deg));
+  animation: sparkle-ia calc(100s / var(--sparkle-dur)) linear infinite;
+}
+
+[data-checked="true"] .sparkle-ia {
+  z-index: -10;
+  width: calc(var(--sparkle-w) * 1.5px);
+  background-color: #acacac;
+  animation-name: sparkle-ia-on;
+  animation-delay: calc(10s / var(--sparkle-dur));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-travel,
+  .animate-pulse-dot,
+  .animate-landing-drift,
+  .animate-marquee,
+  .sparkle-ia {
+    animation: none;
+  }
+}
+
+/* Grano sutil sobre los bloques navy — evita que el degradado se sienta
+ * plano/genérico. SVG feTurbulence inline, sin requests externos. */
+.bg-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ─── Dark mode overrides ───────────────────────────────────── */
+.dark {
+  --color-primary: #1bb8e1;
+  --color-primary-hover: #3cc8ee;
+  --color-sky-muted: #163f4d;
+  --color-primary-fg: #0f0f0d;
+  --color-primary-foreground: #0f0f0d;
+  --color-accent: #6c1ad9;
+  --color-accent-fg: #fbfbfb;
+  --color-accent-foreground: #fbfbfb;
+
+  --color-navy: #2a4f9e;
+  --color-blue: #3b82c4;
+
+  --color-success: #4ade80;
+  --color-error: #f87171;
+  --color-destructive: #f87171;
+  --color-warning: #fcd34d;
+
+  --color-bg-base: #181816;
+  --color-bg-subtle: #1e1e1a;
+  --color-bg-muted: #242420;
+  --color-background: #181816;
+  --color-foreground: #fbfbfb;
+  --color-muted: #1e1e1a;
+  --color-muted-foreground: #847e80;
+  --color-secondary: #1e1e1a;
+  --color-secondary-foreground: #fbfbfb;
+  --color-card: #1e1e1a;
+  --color-card-foreground: #fbfbfb;
+  --color-popover: #1e1e1a;
+  --color-popover-foreground: #fbfbfb;
+
+  --color-border-default: #2c2c28;
+  --color-border-strong: #3d3d38;
+  --color-border: #2c2c28;
+  --color-input: #2c2c28;
+  --color-ring: #6c1ad9;
+
+  --color-chart-neutral: #6e6864;
+  --color-chart-neutral-subtle: #423d39;
+
+  --color-text-primary: #fbfbfb;
+  --color-text-secondary: #c2babc;
+  --color-text-muted: #847e80;
+  --color-text-on-primary: #0f0f0d;
+
+  --color-sidebar: var(--color-bg-base);
+  --color-sidebar-foreground: var(--color-text-primary);
+  --color-sidebar-primary: var(--color-brand-blue);
+  --color-sidebar-primary-foreground: #ffffff;
+  --color-sidebar-accent: color-mix(in srgb, #0056a4 22%, var(--color-bg-base));
+  --color-sidebar-accent-foreground: var(--color-sky);
+  --color-sidebar-border: color-mix(in srgb, #1bb8e1 28%, transparent);
+  --color-sidebar-ring: var(--color-sky);
+}
+
+html {
+  color-scheme: light;
+  scroll-behavior: smooth;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+}
+
+/* Grosor de trazo del sistema de íconos; en @layer base y :where() para que utilidades como stroke-2 lo sobrescriban. */
+@layer base {
+  :where(svg.lucide) {
+    stroke-width: 1.5;
+  }
+}
+
+/* Sidebar = body. Degradado de marca: solo border-bottom del enlace activo (no el fill). */
+[data-sidebar="sidebar"] {
+  background: var(--color-bg-base);
+}
+
+[data-sidebar="menu-button"][data-active="true"] {
+  position: relative;
+}
+
+[data-sidebar="menu-button"][data-active="true"]::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2.5px;
+  pointer-events: none;
+  background-image: linear-gradient(
+    90deg,
+    #2c0d5a 0%,
+    #0056a4 50%,
+    #1bb8e1 100%
+  );
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-slot="sidebar-menu-button"] {
+    transition-property: background-color, color;
+    transition-duration: 160ms;
+    transition-timing-function: ease;
+  }
+}
+
+.dark [data-sidebar="sidebar"] {
+  background-image: none;
+  background-color: var(--color-sidebar);
+}
+
+/* El SVG de Nivo/mapas no debe empujar el layout más allá del viewport. */
+.chart-frame {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* ─── Dashboard bento grid ───────────────────────────────────── */
+.dashboard-bento {
+  display: grid;
+  gap: var(--space-bento);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  /* Mobile: crece con el contenido; el scroll vertical es del <main> */
+  flex: 0 0 auto;
+  height: auto;
+  min-height: 0;
+  align-content: start;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: auto;
+  grid-template-areas:
+    "proyecto"
+    "menciones"
+    "calendar"
+    "sentimiento"
+    "keywords"
+    "trafico"
+    "desinfo"
+    "alcance"
+    "alertas"
+    "tendencias";
+}
+
+/* Contener overflow para que ninguna card pinte encima de otra */
+.dashboard-bento > [data-area] {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/*
+ * Mobile: altura fija en cards densas → scroll interno,
+ * no expandir todo el contenido ni encimar vecinos.
+ */
+.dashboard-bento > [data-area="calendar"] {
+  height: 220px;
+}
+.dashboard-bento > [data-area="sentimiento"] {
+  height: 260px;
+}
+.dashboard-bento > [data-area="keywords"],
+.dashboard-bento > [data-area="trafico"],
+.dashboard-bento > [data-area="desinfo"],
+.dashboard-bento > [data-area="alertas"],
+.dashboard-bento > [data-area="tendencias"] {
+  height: 300px;
+}
+
+@media (min-width: 640px) {
+  .dashboard-bento {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "proyecto proyecto"
+      "menciones calendar"
+      "sentimiento calendar"
+      "keywords trafico"
+      "desinfo alcance"
+      "alertas tendencias";
+  }
+
+  .dashboard-bento > [data-area="calendar"] {
+    height: 280px;
+  }
+  .dashboard-bento > [data-area="sentimiento"] {
+    height: 220px;
+  }
+  .dashboard-bento > [data-area="keywords"],
+  .dashboard-bento > [data-area="trafico"],
+  .dashboard-bento > [data-area="desinfo"],
+  .dashboard-bento > [data-area="alertas"],
+  .dashboard-bento > [data-area="tendencias"] {
+    height: 300px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-bento {
+    /* min-height en px (no % ni "100%") a propósito: las filas "fr" de abajo
+       necesitan una altura DEFINIDA del contenedor para repartirse, y un
+       porcentaje solo es definido si TODA la cadena de ancestros hasta aquí
+       tiene altura fija — con el widget de imágenes fuera de este grid,
+       agregado como hermano scrolleable, esa cadena ya no está garantizada.
+       Con px puro no depende de nada de eso: las gráficas de Nivo siempre
+       tienen dónde medir. */
+    flex: 1 1 auto;
+    min-height: 720px;
+    gap: var(--space-bento);
+    grid-template-columns: minmax(200px, 0.88fr) minmax(0, 1.4fr) minmax(
+        190px,
+        0.88fr
+      );
+    grid-template-rows:
+      minmax(0, 1.05fr)
+      minmax(0, 0.95fr)
+      minmax(0, 1.05fr)
+      minmax(0, 0.8fr);
+    grid-template-areas:
+      "proyecto menciones  calendar"
+      "desinfo  sentimiento calendar"
+      "keywords trafico    tendencias"
+      "alcance  alertas    tendencias";
+  }
+
+  .dashboard-bento > [data-area] {
+    height: auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+.dashboard-bento > [data-area="calendar"] {
+  grid-area: calendar;
+}
+.dashboard-bento > [data-area="menciones"] {
+  grid-area: menciones;
+}
+.dashboard-bento > [data-area="proyecto"] {
+  grid-area: proyecto;
+}
+.dashboard-bento > [data-area="sentimiento"] {
+  grid-area: sentimiento;
+}
+.dashboard-bento > [data-area="desinfo"] {
+  grid-area: desinfo;
+}
+.dashboard-bento > [data-area="keywords"] {
+  grid-area: keywords;
+}
+.dashboard-bento > [data-area="trafico"] {
+  grid-area: trafico;
+}
+.dashboard-bento > [data-area="tendencias"] {
+  grid-area: tendencias;
+}
+.dashboard-bento > [data-area="alcance"] {
+  grid-area: alcance;
+}
+.dashboard-bento > [data-area="alertas"] {
+  grid-area: alertas;
+}
+
+/* ─── Panel general (agregado de todos los proyectos) ─────────
+ * A diferencia de .dashboard-bento (un solo proyecto, encaja en
+ * el viewport sin scroll), este panel tiene ~17 bloques: se deja
+ * crecer y scrollea verticalmente con el <main>.
+ */
+.dashboard-general-bento {
+  display: grid;
+  gap: var(--space-bento);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: auto;
+  grid-template-areas:
+    "resumen"
+    "kpis"
+    "calendar"
+    "alertas"
+    "ia"
+    "paises"
+    "emisores"
+    "alcance-fuente"
+    "tendencia-combo"
+    "nss-tema"
+    "tendencias"
+    "keywords"
+    "tendencia-alcance"
+    "tonalidad"
+    "trafico"
+    "rendimiento"
+    "imagenes";
+}
+
+.dashboard-general-bento > [data-area] {
+  min-height: 0;
+}
+
+.dashboard-general-bento > [data-area="resumen"] {
+  min-height: 160px;
+}
+.dashboard-general-kpis {
+  display: grid;
+  gap: var(--space-bento);
+  grid-template-columns: minmax(0, 1fr);
+}
+.dashboard-general-kpis > * {
+  min-height: 88px;
+  height: 88px;
+}
+.dashboard-general-bento > [data-area="alertas"] {
+  height: 280px;
+}
+.dashboard-general-bento > [data-area="ia"] {
+  min-height: 200px;
+}
+.dashboard-general-bento > [data-area="calendar"] {
+  height: 260px;
+}
+.dashboard-general-bento > [data-area="trafico"],
+.dashboard-general-bento > [data-area="alcance-fuente"],
+.dashboard-general-bento > [data-area="emisores"] {
+  height: 300px;
+}
+.dashboard-general-bento > [data-area="keywords"],
+.dashboard-general-bento > [data-area="paises"] {
+  height: 260px;
+}
+.dashboard-general-bento > [data-area="tendencia-combo"],
+.dashboard-general-bento > [data-area="tendencia-alcance"],
+.dashboard-general-bento > [data-area="rendimiento"] {
+  height: 260px;
+}
+.dashboard-general-bento > [data-area="tendencias"] {
+  height: 300px;
+}
+.dashboard-general-bento > [data-area="tonalidad"],
+.dashboard-general-bento > [data-area="nss-tema"] {
+  height: 320px;
+}
+.dashboard-general-bento > [data-area="imagenes"] {
+  height: 360px;
+}
+
+@media (min-width: 640px) {
+  .dashboard-general-bento {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "resumen resumen"
+      "kpis kpis"
+      "calendar calendar"
+      "alertas alertas"
+      "ia ia"
+      "paises alcance-fuente"
+      "emisores emisores"
+      "tendencia-combo tendencia-combo"
+      "nss-tema nss-tema"
+      "tendencias tendencias"
+      "keywords tendencia-alcance"
+      "trafico rendimiento"
+      "tonalidad tonalidad"
+      "imagenes imagenes";
+  }
+
+  .dashboard-general-kpis {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .dashboard-general-bento > [data-area="resumen"] {
+    min-height: 140px;
+  }
+  .dashboard-general-bento > [data-area="calendar"] {
+    height: auto;
+    min-height: 320px;
+  }
+  .dashboard-general-bento > [data-area="tendencias"] {
+    height: 320px;
+  }
+  .dashboard-general-bento > [data-area="tonalidad"],
+  .dashboard-general-bento > [data-area="nss-tema"] {
+    height: 320px;
+  }
+  .dashboard-general-bento > [data-area="imagenes"] {
+    height: 340px;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* grid-template-columns/rows/areas se declaran por separado (sin el
+   * shorthand grid-template): Lightning CSS (Turbopack) fusiona las tres
+   * longhand en el shorthand y, con este patrón de áreas, la fusión pierde
+   * una fila y desalinea "tendencia-combo" fuera del layout. El alto de
+   * cada fila se controla con min-height por área en vez de
+   * grid-template-rows para evitar disparar esa fusión. */
+  .dashboard-general-bento {
+    grid-template-columns: minmax(200px, 0.88fr) minmax(0, 1.4fr) minmax(
+        220px,
+        0.9fr
+      );
+    grid-auto-rows: auto;
+    grid-template-areas:
+      "resumen kpis kpis"
+      "calendar alertas ia"
+      "tendencias paises ia"
+      "emisores emisores ia"
+      "tendencia-combo tendencia-combo ia"
+      "alcance-fuente nss-tema tonalidad"
+      "keywords rendimiento tonalidad"
+      "trafico rendimiento tendencia-alcance"
+      "imagenes imagenes imagenes";
+  }
+
+  .dashboard-general-bento > [data-area] {
+    height: auto;
+    min-height: 0;
+  }
+
+  .dashboard-general-kpis {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .dashboard-general-bento > [data-area="resumen"],
+  .dashboard-general-bento > [data-area="kpis"] {
+    min-height: 96px;
+  }
+  .dashboard-general-kpis > * {
+    height: auto;
+    min-height: 88px;
+  }
+  .dashboard-general-bento > [data-area="alertas"],
+  .dashboard-general-bento > [data-area="paises"],
+  .dashboard-general-bento > [data-area="tendencias"] {
+    min-height: 190px;
+  }
+  .dashboard-general-bento > [data-area="alcance-fuente"],
+  .dashboard-general-bento > [data-area="keywords"],
+  .dashboard-general-bento > [data-area="trafico"] {
+    min-height: 225px;
+  }
+  .dashboard-general-bento > [data-area="emisores"] {
+    min-height: 260px;
+  }
+  .dashboard-general-bento > [data-area="tendencia-combo"] {
+    min-height: 260px;
+  }
+  .dashboard-general-bento > [data-area="nss-tema"] {
+    min-height: 230px;
+  }
+  .dashboard-general-bento > [data-area="imagenes"] {
+    min-height: 340px;
+  }
+  .dashboard-general-bento > [data-area="calendar"] {
+    min-height: 388px;
+  }
+  .dashboard-general-bento > [data-area="ia"] {
+    min-height: 540px;
+    /* "ia" comparte columna con 4 filas de otros widgets (calendar, tendencias/
+     * paises, emisores, tendencia-combo) cuya altura combinada (~1100-1200px)
+     * supera por mucho su propio min-height — el grid por defecto estira
+     * (align-items: stretch) la tarjeta para llenar esa altura completa,
+     * dejando un hueco grande en blanco cuando el contenido real es corto
+     * (ej. una cuenta con 1 solo proyecto, sin el comparativo "Actividad por
+     * proyecto" que solo aparece con 2+). align-self: start deja que la
+     * tarjeta mida lo que su contenido real necesita en vez de forzarla a
+     * esa altura combinada. */
+    align-self: start;
+  }
+  .dashboard-general-bento > [data-area="tonalidad"],
+  .dashboard-general-bento > [data-area="rendimiento"] {
+    min-height: 463px;
+  }
+}
+
+/* Asignación de área — obligatoria: sin esto grid-template-areas no coloca
+ * nada, el grid cae a auto-placement por orden de DOM. */
+.dashboard-general-bento > [data-area="resumen"] {
+  grid-area: resumen;
+}
+.dashboard-general-bento > [data-area="kpis"] {
+  grid-area: kpis;
+}
+.dashboard-general-bento > [data-area="alertas"] {
+  grid-area: alertas;
+}
+.dashboard-general-bento > [data-area="ia"] {
+  grid-area: ia;
+}
+.dashboard-general-bento > [data-area="calendar"] {
+  grid-area: calendar;
+}
+.dashboard-general-bento > [data-area="trafico"] {
+  grid-area: trafico;
+}
+.dashboard-general-bento > [data-area="alcance-fuente"] {
+  grid-area: alcance-fuente;
+}
+.dashboard-general-bento > [data-area="tendencia-combo"] {
+  grid-area: tendencia-combo;
+}
+.dashboard-general-bento > [data-area="nss-tema"] {
+  grid-area: nss-tema;
+}
+.dashboard-general-bento > [data-area="emisores"] {
+  grid-area: emisores;
+}
+.dashboard-general-bento > [data-area="tendencias"] {
+  grid-area: tendencias;
+}
+.dashboard-general-bento > [data-area="keywords"] {
+  grid-area: keywords;
+}
+.dashboard-general-bento > [data-area="tendencia-alcance"] {
+  grid-area: tendencia-alcance;
+}
+.dashboard-general-bento > [data-area="tonalidad"] {
+  grid-area: tonalidad;
+}
+.dashboard-general-bento > [data-area="paises"] {
+  grid-area: paises;
+}
+.dashboard-general-bento > [data-area="rendimiento"] {
+  grid-area: rendimiento;
+}
+.dashboard-general-bento > [data-area="imagenes"] {
+  grid-area: imagenes;
+}
+
+/* ─── Sonner (toasts) ───────────────────────────────────────── */
+:root {
+  --normal-bg: var(--color-bg-base);
+  --normal-border: var(--color-border-default);
+  --normal-text: var(--color-text-primary);
+  --success-bg: color-mix(in srgb, var(--color-success) 10%, white);
+  --success-border: color-mix(in srgb, var(--color-success) 35%, transparent);
+  --success-text: var(--color-success);
+  --error-bg: color-mix(in srgb, var(--color-error) 10%, white);
+  --error-border: color-mix(in srgb, var(--color-error) 35%, transparent);
+  --error-text: var(--color-error);
+  --warning-bg: color-mix(in srgb, var(--color-warning) 18%, white);
+  --warning-border: color-mix(in srgb, var(--color-warning) 40%, transparent);
+  --warning-text: var(--color-text-primary);
+  --info-bg: color-mix(in srgb, var(--color-primary) 10%, white);
+  --info-border: color-mix(in srgb, var(--color-primary) 35%, transparent);
+  --info-text: var(--color-primary);
+}
+
+.dark {
+  --success-bg: color-mix(in srgb, var(--color-success) 16%, black);
+  --success-border: color-mix(in srgb, var(--color-success) 40%, transparent);
+  --error-bg: color-mix(in srgb, var(--color-error) 16%, black);
+  --error-border: color-mix(in srgb, var(--color-error) 40%, transparent);
+  --warning-bg: color-mix(in srgb, var(--color-warning) 16%, black);
+  --warning-border: color-mix(in srgb, var(--color-warning) 40%, transparent);
+  --info-bg: color-mix(in srgb, var(--color-primary) 16%, black);
+  --info-border: color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+/* biome-ignore lint/correctness/noUnknownTypeSelector: View Transitions API */
+::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* biome-ignore lint/correctness/noUnknownTypeSelector: View Transitions API */
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* biome-ignore lint/correctness/noUnknownTypeSelector: View Transitions API */
+html[data-magicui-theme-vt="active"]::view-transition-new(root) {
+  clip-path: var(--magicui-theme-vt-clip-from);
+}

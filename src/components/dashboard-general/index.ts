@@ -1,0 +1,15 @@
+export { AlcanceFuenteWidget } from "./alcance-fuente-widget";
+export { AlcanceTotalWidget } from "./alcance-total-widget";
+export { DashboardGeneralSkeleton } from "./dashboard-general-skeleton";
+export { DashboardGeneralVista } from "./dashboard-general-vista";
+export { ImagenesVideosWidget } from "./imagenes-videos-widget";
+export { NssPorTemaWidget } from "./nss-por-tema-widget";
+export { PaisesCoberturaWidget } from "./paises-cobertura-widget";
+export { PromedioMencionesWidget } from "./promedio-menciones-widget";
+export { RendimientoMencionesWidget } from "./rendimiento-menciones-widget";
+export { ResumenGeneralWidget } from "./resumen-general-widget";
+export { TendenciaAlcanceWidget } from "./tendencia-alcance-widget";
+export { TendenciaMencionesAlcanceWidget } from "./tendencia-menciones-alcance-widget";
+export { TonalidadFuenteWidget } from "./tonalidad-fuente-widget";
+export { TopEmisoresWidget } from "./top-emisores-widget";
+export { WidgetProximamente } from "./widget-proximamente";
